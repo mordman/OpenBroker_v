@@ -1,0 +1,53 @@
+@page
+@using OpenBrokerFront.Models
+
+<h2>Home</h2>
+
+@using (Html.BeginForm())
+{
+
+        @(Html.DevExtreme().Form<OpenBrokerFront.Models.SendParams>
+    ()
+    .Items(items =>
+    {
+
+    items.AddSimpleFor(m => m.From);//.Label("<b>Дата с</b>");
+
+    items.AddSimpleFor(m => m.To);//.Label("<b>Дата по</b>");
+
+    items.AddSimpleFor(m => m.OutType);//.Label("<b>Тип</b>");
+
+    items.AddButton().ButtonOptions(b => { b.UseSubmitBehavior(true); b.Text("Done"); b.Type(ButtonType.Success); });
+
+    })
+    )
+
+    }
+
+
+
+    @(Html.DevExtreme().DataGrid<SampleOrder>()
+    .ShowBorders(true)
+    .DataSource(d => d.Mvc().Controller("SampleData").LoadAction("Get").Key("OrderID"))
+    .Columns(columns => {
+        columns.AddFor(m => m.OrderID);
+        columns.AddFor(m => m.OrderDate);
+        columns.AddFor(m => m.CustomerName);
+        columns.AddFor(m => m.ShipCountry);
+        columns.AddFor(m => m.ShipCity);
+    })
+    .Paging(p => p.PageSize(10))
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(true))
+    .Grouping(g => g.AutoExpandAll(false))
+    .RemoteOperations(true)
+    .Summary(s => s
+        .TotalItems(totalItems => {
+            totalItems.AddFor(m => m.ShipCity).SummaryType(SummaryType.Count);
+        })
+        .GroupItems(groupItems => {
+            groupItems.Add().SummaryType(SummaryType.Count);
+        })
+    )
+)
